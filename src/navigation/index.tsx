@@ -25,7 +25,7 @@ const AppNavigator = () => {
         <Stack.Screen 
           name="PlayerSetup" 
           component={PlayerSetupScreen} 
-          options={{ title: 'Añadir Jugadores' }} 
+          options={{ title: 'Jugadores' }} 
         />
         <Stack.Screen 
           name="Config" 

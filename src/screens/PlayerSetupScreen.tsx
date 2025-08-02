@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,17 +28,17 @@ const PlayerSetupScreen = ({ navigation }: any) => {
           value={name}
           onChangeText={setName}
         />
-        <TouchableOpacity onPress={handleAddPlayer}>
-          <Ionicons name="add-circle" size={32} color="green" />
+        <TouchableOpacity onPress={handleAddPlayer} style={styles.iconButton}>
+          <Ionicons name="add-circle" size={30} color="green" />
         </TouchableOpacity>
       </View>
       <FlatList
         data={players}
         renderItem={({ item }) => (
           <View style={styles.playerRow}>
-            <Text>{item.name}</Text>
-            <TouchableOpacity onPress={() => removePlayer(item.id)}>
-              <Ionicons name="remove-circle" size={24} color="red" />
+            <Text style={styles.playerName}>{item.name}</Text>
+            <TouchableOpacity onPress={() => removePlayer(item.id)} style={styles.iconButton}>
+              <Ionicons name="remove-circle" size={30} color="red" />
             </TouchableOpacity>
           </View>
         )}
@@ -69,24 +70,33 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 10,
     marginRight: 10,
+    borderRadius: 5,
   },
   playerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+  },
+  playerName: {
+    fontSize: 18,
+  },
+  iconButton: {
+    padding: 5,
   },
   button: {
     backgroundColor: '#007bff',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
+    marginTop: 20,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   disabledButton: {
     backgroundColor: '#ccc',
