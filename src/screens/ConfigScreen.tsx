@@ -1,21 +1,41 @@
-
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import useGameStore from '../state/game-store';
 
 const ConfigScreen = ({ navigation }: any) => {
   const { rebuyLimit, setRebuyLimit } = useGameStore();
 
+  const handleDecrement = () => {
+    if (rebuyLimit === null) setRebuyLimit(10); // From infinity to 10
+    else if (rebuyLimit > 0) setRebuyLimit(rebuyLimit - 1);
+    else if (rebuyLimit === 0) setRebuyLimit(null); // From 0 to infinity
+  };
+
+  const handleIncrement = () => {
+    if (rebuyLimit === null) setRebuyLimit(0); // From infinity to 0
+    else setRebuyLimit(rebuyLimit + 1);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Configuración de la Partida</Text>
-      <View style={styles.rebuyContainer}>
-        <Text>Reenganches:</Text>
-        <Button title="-" onPress={() => setRebuyLimit(rebuyLimit === null ? 10 : rebuyLimit - 1)} />
-        <Text style={styles.rebuyValue}>{rebuyLimit === null ? '∞' : rebuyLimit}</Text>
-        <Button title="+" onPress={() => setRebuyLimit(rebuyLimit === null ? 0 : rebuyLimit + 1)} />
+      <View>
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>Reenganches</Text>
+          <View style={styles.spinnerContainer}>
+            <TouchableOpacity onPress={handleDecrement} style={styles.spinnerButton}>
+              <Ionicons name="remove-circle-outline" size={32} color="#dc3545" />
+            </TouchableOpacity>
+            <Text style={styles.rebuyValue}>{rebuyLimit === null ? '∞' : rebuyLimit}</Text>
+            <TouchableOpacity onPress={handleIncrement} style={styles.spinnerButton}>
+              <Ionicons name="add-circle-outline" size={32} color="#28a745" />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-      <Button title="Empezar Partida" onPress={() => navigation.navigate('Game')} />
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Game')}>
+        <Text style={styles.buttonText}>Empezar Partida</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -23,24 +43,48 @@ const ConfigScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 40,
   },
-  rebuyContainer: {
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  settingLabel: {
+    fontSize: 18,
+  },
+  spinnerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 20,
+  },
+  spinnerButton: {
+    padding: 5,
   },
   rebuyValue: {
     marginHorizontal: 20,
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: 'bold',
+    minWidth: 40,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
