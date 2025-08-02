@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import useGameStore from '../state/game-store';
 
 const HomeScreen = ({ navigation }: any) => {
@@ -10,7 +12,6 @@ const HomeScreen = ({ navigation }: any) => {
     if (gameExists) {
       navigation.navigate('Game');
     } else {
-      // Opcional: mostrar un alert o mensaje de que no hay partida guardada
       handleNewGame();
     }
   };
@@ -22,8 +23,18 @@ const HomeScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Button title="Iniciar Nueva Partida" onPress={handleNewGame} />
-      <Button title="Continuar Partida" onPress={handleContinue} />
+      <View style={styles.logoContainer}>
+        <Ionicons name="layers-outline" size={100} color="#DAA520" />
+        <Text style={styles.title}>Chinchón</Text>
+      </View>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleNewGame}>
+          <Text style={styles.buttonText}>Nueva Partida</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleContinue}>
+          <Text style={styles.buttonText}>Continuar Partida</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -31,9 +42,34 @@ const HomeScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    gap: 10
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+  },
+  logoContainer: {
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 20,
+  },
+  buttonsContainer: {
+    width: '100%',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

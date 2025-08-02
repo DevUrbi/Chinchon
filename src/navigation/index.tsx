@@ -20,7 +20,7 @@ const AppNavigator = () => {
         <Stack.Screen 
           name="Home" 
           component={HomeScreen} 
-          options={{ title: 'Chinchón Calculator' }} 
+          options={{ headerShown: false }} 
         />
         <Stack.Screen 
           name="PlayerSetup" 
