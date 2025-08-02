@@ -16,7 +16,12 @@ const Stack = createNativeStackNavigator();
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator 
+        initialRouteName="Home"
+        screenOptions={{
+          contentStyle: { backgroundColor: '#fff' } // Set a default white background for all screens
+        }}
+      >
         <Stack.Screen 
           name="Home" 
           component={HomeScreen} 
