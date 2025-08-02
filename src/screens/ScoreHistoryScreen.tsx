@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import useGameStore from "../state/game-store";
 
 const ScoreHistoryScreen = () => {
-  const { players, history } = useGameStore();
+  const { players, history, gameWinnerId } = useGameStore();
 
   return (
     <ScrollView horizontal style={styles.scrollView}>
@@ -11,8 +11,14 @@ const ScoreHistoryScreen = () => {
         <View style={styles.headerRow}>
           <Text style={styles.roundHeaderCell}></Text>
           {players.map((player) => (
-            <Text key={player.id} style={styles.playerHeaderCell}>
-              {player.name}
+            <Text
+              key={player.id}
+              style={[
+                styles.playerHeaderCell,
+                player.isEliminated && styles.eliminatedPlayerText,
+              ]}
+            >
+              {player.name} {gameWinnerId === player.id && "(CH)"}
             </Text>
           ))}
         </View>
@@ -24,7 +30,13 @@ const ScoreHistoryScreen = () => {
               0
             );
             return (
-              <Text key={player.id} style={styles.playerDataCell}>
+              <Text
+                key={player.id}
+                style={[
+                  styles.playerDataCell,
+                  player.isEliminated && styles.eliminatedPlayerText,
+                ]}
+              >
                 {totalScore}
               </Text>
             );
@@ -50,7 +62,11 @@ const ScoreHistoryScreen = () => {
               return (
                 <Text
                   key={player.id}
-                  style={[styles.playerDataCell, scoreStyle]}
+                  style={[
+                    styles.playerDataCell,
+                    scoreStyle,
+                    player.isEliminated && styles.eliminatedPlayerText,
+                  ]}
                 >
                   {score || "-"}
                 </Text>
@@ -126,6 +142,9 @@ const styles = StyleSheet.create({
   negativeScore: {
     color: "green",
   },
+  eliminatedPlayerText: {
+    color: "#999",
+    textDecorationLine: "line-through",
+  },
 });
-
 export default ScoreHistoryScreen;

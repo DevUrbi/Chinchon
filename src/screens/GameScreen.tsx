@@ -4,7 +4,7 @@ import useGameStore from '../state/game-store';
 import AppModal from '../components/AppModal';
 
 const GameScreen = ({ navigation }: any) => {
-  const { players, currentRoundScores, updateRoundScore, nextRound, round } = useGameStore();
+  const { players, currentRoundScores, updateRoundScore, nextRound, round, chinchonWin, gameEnded, gameWinnerId } = useGameStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
@@ -15,40 +15,52 @@ const GameScreen = ({ navigation }: any) => {
     navigation.navigate('Classification');
   };
 
+  const handleChinchon = (winnerId: string) => {
+    chinchonWin(winnerId);
+    setModalTitle("¡Chinchón!");
+    const winner = players.find(p => p.id === winnerId);
+    setModalMessage(`¡${winner?.name} ha ganado la partida con Chinchón!`);
+    setModalButtons([{ text: "Ver Resultados", onPress: () => { setModalVisible(false); navigation.navigate('Classification'); } }]);
+    setModalVisible(true);
+  };
+
   useEffect(() => {
     navigation.setOptions({ title: `Ronda ${round}` });
-  }, [round, navigation]);
+  }, [round, navigation, gameEnded]);
 
   useEffect(() => {
     const activePlayers = players.filter(p => !p.isEliminated);
-    if (activePlayers.length <= 1 && round > 1) {
+    if (activePlayers.length <= 1 && round > 1 && !gameEnded) {
       setModalTitle("Partida Terminada");
       setModalMessage(activePlayers.length === 1 ? `El ganador es ${activePlayers[0].name}` : "Todos los jugadores han sido eliminados");
-      setModalButtons([{ text: "OK", onPress: () => { setModalVisible(false); navigation.navigate('Home'); } }]);
+      setModalButtons([{ text: "Ver Resultados", onPress: () => { setModalVisible(false); navigation.navigate('Classification'); } }]);
       setModalVisible(true);
     }
-  }, [players, round, navigation]);
+  }, [players, round, navigation, gameEnded]);
 
   const renderPlayer = ({ item }: { item: any }) => {
-    if (item.isEliminated) return null;
+    const isDisabled = item.isEliminated || (gameEnded && item.id !== gameWinnerId);
 
     return (
-      <View style={styles.playerRow}>
-        <Text style={styles.playerName}>{item.name}</Text>
+      <View style={[styles.playerRow, isDisabled && styles.disabledPlayerRow]}>
+        <Text style={[styles.playerName, isDisabled && styles.disabledPlayerText]}>{item.name}</Text>
         <View style={styles.actionsContainer}>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, -10)} style={[styles.scoreButton, styles.negativeButton]}>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, -10)} style={[styles.scoreButton, styles.negativeButton]} disabled={isDisabled}>
             <Text style={[styles.scoreButtonText, styles.negativeButtonText]}>-10</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, -1)} style={[styles.scoreButton, styles.negativeButton]}>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, -1)} style={[styles.scoreButton, styles.negativeButton]} disabled={isDisabled}>
             <Text style={[styles.scoreButtonText, styles.negativeButtonText]}>-1</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, 1)} style={[styles.scoreButton, styles.positiveButton]}>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, 1)} style={[styles.scoreButton, styles.positiveButton]} disabled={isDisabled}>
             <Text style={[styles.scoreButtonText, styles.positiveButtonText]}>+1</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, 5)} style={[styles.scoreButton, styles.positiveButton]}>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, 5)} style={[styles.scoreButton, styles.positiveButton]} disabled={isDisabled}>
             <Text style={[styles.scoreButtonText, styles.positiveButtonText]}>+5</Text>
           </TouchableOpacity>
-          <Text style={styles.playerScore}>{currentRoundScores[item.id] || 0}</Text>
+          <TouchableOpacity onPress={() => handleChinchon(item.id)} style={[styles.scoreButton, styles.chinchonButton]} disabled={isDisabled}>
+            <Text style={[styles.scoreButtonText, styles.chinchonButtonText]}>CH</Text>
+          </TouchableOpacity>
+          <Text style={[styles.playerScore, isDisabled && styles.disabledPlayerText]}>{currentRoundScores[item.id] || 0}</Text>
         </View>
       </View>
     );
@@ -127,6 +139,12 @@ const styles = StyleSheet.create({
   positiveButtonText: {
     color: '#dc3545', // Red
   },
+  chinchonButton: {
+    borderColor: '#007bff',
+  },
+  chinchonButtonText: {
+    color: '#007bff',
+  },
   button: {
     backgroundColor: '#007bff',
     padding: 15,
@@ -138,6 +156,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  disabledPlayerRow: {
+    opacity: 0.5,
+  },
+  disabledPlayerText: {
+    color: '#999',
   },
 });
 

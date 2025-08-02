@@ -6,6 +6,8 @@ interface ChinchonGameState extends GameState {
   round: number;
   history: any[];
   currentRoundScores: { [playerId: string]: number };
+  gameWinnerId: string | null;
+  gameEnded: boolean;
   addPlayer: (name: string) => void;
   removePlayer: (id: string) => void;
   updateRoundScore: (id: string, amount: number) => void;
@@ -13,6 +15,7 @@ interface ChinchonGameState extends GameState {
   nextRound: () => void;
   loadGame: () => Promise<boolean>;
   startNewGame: () => void;
+  chinchonWin: (winnerId: string) => void;
 }
 
 const useGameStore = create<ChinchonGameState>((set, get) => ({
@@ -21,6 +24,8 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
   round: 1,
   history: [],
   currentRoundScores: {},
+  gameWinnerId: null,
+  gameEnded: false,
 
   addPlayer: (name: string) => {
     const newPlayer: Player = {
@@ -119,8 +124,15 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
   },
 
   startNewGame: () => {
-    set({ players: [], history: [], rebuyLimit: null, round: 1, currentRoundScores: {} });
+    set({ players: [], history: [], rebuyLimit: null, round: 1, currentRoundScores: {}, gameWinnerId: null, gameEnded: false });
     AsyncStorage.removeItem('chinchon-game');
+  },
+
+    chinchonWin: (winnerId: string) => {
+    set(() => {
+      return { gameWinnerId: winnerId, gameEnded: true };
+    });
+    AsyncStorage.setItem('chinchon-game', JSON.stringify(get()));
   }
 }));
 
