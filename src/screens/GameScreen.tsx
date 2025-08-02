@@ -1,31 +1,30 @@
 
-import React from 'react';
-import { View, Text, Button, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Button, StyleSheet, FlatList, Alert } from 'react-native';
 import useGameStore from '../state/game-store';
 
 const GameScreen = ({ navigation }: any) => {
-  const { players, updateScore, eliminatePlayer, rebuyPlayer, rebuyLimit } = useGameStore();
+  const { players, currentRoundScores, updateRoundScore, nextRound, round } = useGameStore();
 
-  const handleUpdateScore = (id: string, amount: number) => {
-    const player = players.find((p) => p.id === id);
-    if (player) {
-      const newScore = player.score + amount;
-      if (newScore >= 100) {
-        if (rebuyLimit !== null && player.rebuys >= rebuyLimit) {
-          eliminatePlayer(id);
-        } else {
-          rebuyPlayer(id);
-        }
-      } else {
-        updateScore(id, amount);
-      }
-    }
-
-    const activePlayers = players.filter((p) => !p.isEliminated);
-    if (activePlayers.length <= 1) {
-      navigation.navigate('Scoreboard');
-    }
+  const handleNextRound = () => {
+    nextRound();
+    navigation.navigate('Classification');
   };
+
+  useEffect(() => {
+    navigation.setOptions({ title: `Ronda ${round}` });
+  }, [round, navigation]);
+
+  useEffect(() => {
+    const activePlayers = players.filter(p => !p.isEliminated);
+    if (activePlayers.length <= 1 && round > 1) {
+      Alert.alert(
+        "Partida Terminada",
+        activePlayers.length === 1 ? `El ganador es ${activePlayers[0].name}` : "Todos los jugadores han sido eliminados",
+        [{ text: "OK", onPress: () => navigation.navigate('Home') }]
+      );
+    }
+  }, [players, round, navigation]);
 
   const renderPlayer = ({ item }: { item: any }) => {
     if (item.isEliminated) return null;
@@ -33,12 +32,14 @@ const GameScreen = ({ navigation }: any) => {
     return (
       <View style={styles.playerRow}>
         <Text style={styles.playerName}>{item.name}</Text>
-        <Text style={styles.playerScore}>{item.score}</Text>
-        <View style={styles.buttonsContainer}>
-          <Button title="-10" onPress={() => handleUpdateScore(item.id, -10)} />
-          <Button title="+1" onPress={() => handleUpdateScore(item.id, 1)} />
-          <Button title="+5" onPress={() => handleUpdateScore(item.id, 5)} />
-          <Button title="+10" onPress={() => handleUpdateScore(item.id, 10)} />
+        <View style={styles.scoreContainer}>
+            <Text style={styles.playerScore}>{currentRoundScores[item.id] || 0}</Text>
+            <View style={styles.buttonsContainer}>
+                <Button title="-10" onPress={() => updateRoundScore(item.id, -10)} />
+                <Button title="+1" onPress={() => updateRoundScore(item.id, 1)} />
+                <Button title="+5" onPress={() => updateRoundScore(item.id, 5)} />
+                <Button title="+10" onPress={() => updateRoundScore(item.id, 10)} />
+            </View>
         </View>
       </View>
     );
@@ -46,13 +47,12 @@ const GameScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Partida</Text>
       <FlatList
         data={players}
         renderItem={renderPlayer}
         keyExtractor={(item) => item.id}
       />
-      <Button title="Terminar Partida" onPress={() => navigation.navigate('Scoreboard')} />
+      <Button title="Siguiente Ronda" onPress={handleNextRound} />
     </View>
   );
 };
@@ -60,12 +60,6 @@ const GameScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
   },
   playerRow: {
     flexDirection: 'row',
@@ -78,12 +72,17 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: 18,
   },
+  scoreContainer: {
+    alignItems: 'flex-end'
+  },
   playerScore: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5
   },
   buttonsContainer: {
     flexDirection: 'row',
+    gap: 5
   },
 });
 
