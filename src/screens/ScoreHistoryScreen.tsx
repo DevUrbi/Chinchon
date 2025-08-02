@@ -1,22 +1,23 @@
+
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import useGameStore from '../state/game-store';
 
 const ScoreHistoryScreen = () => {
   const { players, history } = useGameStore();
 
   return (
-    <ScrollView horizontal>
+    <ScrollView horizontal style={styles.scrollView}>
         <View style={styles.container}>
             <View style={styles.headerRow}>
-                <Text style={[styles.headerCell, styles.playerHeader]}>Ronda</Text>
+                <Text style={styles.headerCell}>Ronda</Text>
                 {players.map(player => (
                     <Text key={player.id} style={styles.headerCell}>{player.name}</Text>
                 ))}
             </View>
             {history.map((roundData, index) => (
                 <View key={index} style={styles.dataRow}>
-                    <Text style={[styles.dataCell, styles.roundCell]}>{roundData.round}</Text>
+                    <Text style={styles.dataCell}>{roundData.round}</Text>
                     {players.map(player => (
                         <Text key={player.id} style={styles.dataCell}>
                             {roundData.scores[player.id] || '-'}
@@ -30,37 +31,37 @@ const ScoreHistoryScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   container: {
-    padding: 10,
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
   },
   headerRow: {
     flexDirection: 'row',
     borderBottomWidth: 2,
-    borderBottomColor: '#000',
+    borderBottomColor: '#333',
+    backgroundColor: '#f0f0f0',
   },
   headerCell: {
     padding: 10,
     fontWeight: 'bold',
     fontSize: 16,
-    width: 100,
+    minWidth: 80,
     textAlign: 'center',
-  },
-  playerHeader: {
-    width: 60,
   },
   dataRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: '#eee',
   },
   dataCell: {
     padding: 10,
-    width: 100,
+    minWidth: 80,
     textAlign: 'center',
-  },
-  roundCell: {
-    width: 60,
-    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
