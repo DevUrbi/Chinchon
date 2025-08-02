@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GameState, Player } from '../types';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GameState, Player } from "../types";
 
 interface ChinchonGameState extends GameState {
   round: number;
@@ -37,7 +37,10 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
     };
     set((state) => {
       const newPlayers = [...state.players, newPlayer];
-      const newCurrentScores = { ...state.currentRoundScores, [newPlayer.id]: 0 };
+      const newCurrentScores = {
+        ...state.currentRoundScores,
+        [newPlayer.id]: 0,
+      };
       return { players: newPlayers, currentRoundScores: newCurrentScores };
     });
   },
@@ -66,42 +69,45 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
 
   nextRound: () => {
     const { players, rebuyLimit, history, currentRoundScores, round } = get();
-    
+
     // 1. Save current round scores to history
     const roundHistory = { round, scores: { ...currentRoundScores } };
     const newHistory = [...history, roundHistory];
 
     // 2. Add round scores to total scores
-    let playersWithNewTotal = players.map(p => ({
-        ...p,
-        score: p.score + (currentRoundScores[p.id] || 0)
+    let playersWithNewTotal = players.map((p) => ({
+      ...p,
+      score: p.score + (currentRoundScores[p.id] || 0),
     }));
 
     // 3. Apply elimination and rebuy logic
-    const updatedPlayers = playersWithNewTotal.map(player => {
-        if (player.isEliminated) return player;
+    const updatedPlayers = playersWithNewTotal.map((player) => {
+      if (player.isEliminated) return player;
 
-        if (player.score >= 100) {
-            if (rebuyLimit !== null && player.rebuys >= rebuyLimit) {
-                return { ...player, isEliminated: true };
-            } else {
-                const highestScore = Math.max(
-                    ...playersWithNewTotal
-                        .filter(p => !p.isEliminated && p.id !== player.id)
-                        .map(p => p.score)
-                );
-                return { 
-                    ...player, 
-                    score: highestScore, 
-                    rebuys: player.rebuys + 1 
-                };
-            }
+      if (player.score >= 100) {
+        if (rebuyLimit !== null && player.rebuys >= rebuyLimit) {
+          return { ...player, isEliminated: true };
+        } else {
+          const highestScore = Math.max(
+            ...playersWithNewTotal
+              .filter((p) => !p.isEliminated && p.id !== player.id)
+              .map((p) => p.score)
+          );
+          return {
+            ...player,
+            score: highestScore,
+            rebuys: player.rebuys + 1,
+          };
         }
-        return player;
+      }
+      return player;
     });
 
     // 4. Reset round scores and increment round number
-    const newCurrentScores = Object.keys(currentRoundScores).reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
+    const newCurrentScores = Object.keys(currentRoundScores).reduce(
+      (acc, key) => ({ ...acc, [key]: 0 }),
+      {}
+    );
 
     set({
       players: updatedPlayers,
@@ -110,11 +116,11 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
       currentRoundScores: newCurrentScores,
     });
 
-    AsyncStorage.setItem('chinchon-game', JSON.stringify(get()));
+    AsyncStorage.setItem("chinchon-game", JSON.stringify(get()));
   },
 
   loadGame: async () => {
-    const savedGame = await AsyncStorage.getItem('chinchon-game');
+    const savedGame = await AsyncStorage.getItem("chinchon-game");
     if (savedGame) {
       const gameState = JSON.parse(savedGame);
       set(gameState);
@@ -124,16 +130,24 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
   },
 
   startNewGame: () => {
-    set({ players: [], history: [], rebuyLimit: null, round: 1, currentRoundScores: {}, gameWinnerId: null, gameEnded: false });
-    AsyncStorage.removeItem('chinchon-game');
+    set({
+      players: [],
+      history: [],
+      rebuyLimit: null,
+      round: 1,
+      currentRoundScores: {},
+      gameWinnerId: null,
+      gameEnded: false,
+    });
+    AsyncStorage.removeItem("chinchon-game");
   },
 
-    chinchonWin: (winnerId: string) => {
+  chinchonWin: (winnerId: string) => {
     set(() => {
       return { gameWinnerId: winnerId, gameEnded: true };
     });
-    AsyncStorage.setItem('chinchon-game', JSON.stringify(get()));
-  }
+    AsyncStorage.setItem("chinchon-game", JSON.stringify(get()));
+  },
 }));
 
 export default useGameStore;

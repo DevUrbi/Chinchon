@@ -1,15 +1,23 @@
-
-import React from 'react';
-import { Modal, View, Text, Button, StyleSheet } from 'react-native';
+import React from "react";
+import { Modal, View, Text, Button, StyleSheet } from "react-native";
 
 interface AppModalProps {
   visible: boolean;
   title: string;
   message: string;
-  buttons: { text: string; onPress: () => void; style?: 'default' | 'cancel' | 'destructive' }[];
+  buttons: {
+    text: string;
+    onPress: () => void;
+    style?: "default" | "cancel" | "destructive";
+  }[];
 }
 
-const AppModal: React.FC<AppModalProps> = ({ visible, title, message, buttons }) => {
+const AppModal: React.FC<AppModalProps> = ({
+  visible,
+  title,
+  message,
+  buttons,
+}) => {
   return (
     <Modal
       transparent={true}
@@ -23,7 +31,12 @@ const AppModal: React.FC<AppModalProps> = ({ visible, title, message, buttons })
           <Text style={styles.modalMessage}>{message}</Text>
           <View style={styles.buttonContainer}>
             {buttons.map((btn, index) => (
-              <Button key={index} title={btn.text} onPress={btn.onPress} color={btn.style === 'destructive' ? 'red' : undefined} />
+              <Button
+                key={index}
+                title={btn.text}
+                onPress={btn.onPress}
+                color={btn.style === "destructive" ? "red" : undefined}
+              />
             ))}
           </View>
         </View>
@@ -35,17 +48,17 @@ const AppModal: React.FC<AppModalProps> = ({ visible, title, message, buttons })
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -56,19 +69,19 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     marginBottom: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontWeight: "bold",
     fontSize: 20,
   },
   modalMessage: {
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
   },
 });
 
