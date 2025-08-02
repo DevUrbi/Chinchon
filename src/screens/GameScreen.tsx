@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { View, Text, Button, StyleSheet, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity } from 'react-native';
 import useGameStore from '../state/game-store';
 
 const GameScreen = ({ navigation }: any) => {
@@ -32,14 +32,20 @@ const GameScreen = ({ navigation }: any) => {
     return (
       <View style={styles.playerRow}>
         <Text style={styles.playerName}>{item.name}</Text>
-        <View style={styles.scoreContainer}>
-            <Text style={styles.playerScore}>{currentRoundScores[item.id] || 0}</Text>
-            <View style={styles.buttonsContainer}>
-                <Button title="-10" onPress={() => updateRoundScore(item.id, -10)} />
-                <Button title="+1" onPress={() => updateRoundScore(item.id, 1)} />
-                <Button title="+5" onPress={() => updateRoundScore(item.id, 5)} />
-                <Button title="+10" onPress={() => updateRoundScore(item.id, 10)} />
-            </View>
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, -10)} style={[styles.scoreButton, styles.negativeButton]}>
+            <Text style={[styles.scoreButtonText, styles.negativeButtonText]}>-10</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, -1)} style={[styles.scoreButton, styles.negativeButton]}>
+            <Text style={[styles.scoreButtonText, styles.negativeButtonText]}>-1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, 1)} style={[styles.scoreButton, styles.positiveButton]}>
+            <Text style={[styles.scoreButtonText, styles.positiveButtonText]}>+1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => updateRoundScore(item.id, 5)} style={[styles.scoreButton, styles.positiveButton]}>
+            <Text style={[styles.scoreButtonText, styles.positiveButtonText]}>+5</Text>
+          </TouchableOpacity>
+          <Text style={styles.playerScore}>{currentRoundScores[item.id] || 0}</Text>
         </View>
       </View>
     );
@@ -52,7 +58,9 @@ const GameScreen = ({ navigation }: any) => {
         renderItem={renderPlayer}
         keyExtractor={(item) => item.id}
       />
-      <Button title="Siguiente Ronda" onPress={handleNextRound} />
+      <TouchableOpacity style={styles.button} onPress={handleNextRound}>
+        <Text style={styles.buttonText}>Siguiente Ronda</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -70,19 +78,56 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   playerName: {
-    fontSize: 18,
+    fontSize: 20,
+    fontWeight: '500',
+    flex: 1,
   },
-  scoreContainer: {
-    alignItems: 'flex-end'
+  actionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   playerScore: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5
+    fontSize: 20,
+    minWidth: 40,
+    textAlign: 'right',
+    marginLeft: 10,
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    gap: 5
+  scoreButton: {
+    height: 32,
+    width: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 4,
+    borderWidth: 1,
+  },
+  negativeButton: {
+    borderColor: '#28a745', // Green
+  },
+  positiveButton: {
+    borderColor: '#dc3545', // Red
+  },
+  scoreButtonText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  negativeButtonText: {
+    color: '#28a745', // Green
+  },
+  positiveButtonText: {
+    color: '#dc3545', // Red
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    margin: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
