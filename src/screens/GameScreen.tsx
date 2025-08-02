@@ -1,10 +1,14 @@
-
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import useGameStore from '../state/game-store';
+import AppModal from '../components/AppModal';
 
 const GameScreen = ({ navigation }: any) => {
   const { players, currentRoundScores, updateRoundScore, nextRound, round } = useGameStore();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalButtons, setModalButtons] = useState<any[]>([]);
 
   const handleNextRound = () => {
     nextRound();
@@ -18,11 +22,10 @@ const GameScreen = ({ navigation }: any) => {
   useEffect(() => {
     const activePlayers = players.filter(p => !p.isEliminated);
     if (activePlayers.length <= 1 && round > 1) {
-      Alert.alert(
-        "Partida Terminada",
-        activePlayers.length === 1 ? `El ganador es ${activePlayers[0].name}` : "Todos los jugadores han sido eliminados",
-        [{ text: "OK", onPress: () => navigation.navigate('Home') }]
-      );
+      setModalTitle("Partida Terminada");
+      setModalMessage(activePlayers.length === 1 ? `El ganador es ${activePlayers[0].name}` : "Todos los jugadores han sido eliminados");
+      setModalButtons([{ text: "OK", onPress: () => { setModalVisible(false); navigation.navigate('Home'); } }]);
+      setModalVisible(true);
     }
   }, [players, round, navigation]);
 
@@ -61,6 +64,13 @@ const GameScreen = ({ navigation }: any) => {
       <TouchableOpacity style={styles.button} onPress={handleNextRound}>
         <Text style={styles.buttonText}>Siguiente Ronda</Text>
       </TouchableOpacity>
+
+      <AppModal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        buttons={modalButtons}
+      />
     </View>
   );
 };

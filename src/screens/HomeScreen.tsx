@@ -1,25 +1,61 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import useGameStore from '../state/game-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppModal from '../components/AppModal';
 
 const HomeScreen = ({ navigation }: any) => {
   const { loadGame, startNewGame } = useGameStore();
+  const [hasSavedGame, setHasSavedGame] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalButtons, setModalButtons] = useState<any[]>([]);
+
+  useEffect(() => {
+    const checkSavedGame = async () => {
+      const savedGame = await AsyncStorage.getItem('chinchon-game');
+      setHasSavedGame(!!savedGame);
+    };
+    checkSavedGame();
+  }, []);
 
   const handleContinue = async () => {
     const gameExists = await loadGame();
     if (gameExists) {
       navigation.navigate('Game');
     } else {
-      handleNewGame();
+      setModalTitle("No hay partida guardada");
+      setModalMessage("No se encontró ninguna partida para continuar.");
+      setModalButtons([{ text: "OK", onPress: () => setModalVisible(false) }]);
+      setModalVisible(true);
     }
   };
 
   const handleNewGame = () => {
-    startNewGame();
-    navigation.navigate('PlayerSetup');
-  }
+    if (hasSavedGame) {
+      setModalTitle("Iniciar Nueva Partida");
+      setModalMessage("Existe una partida guardada. Si inicias una nueva, la actual se perderá. ¿Estás seguro?");
+      setModalButtons([
+        { text: "Cancelar", onPress: () => setModalVisible(false), style: "cancel" },
+        {
+          text: "Sí, iniciar nueva",
+          onPress: () => {
+            setModalVisible(false);
+            startNewGame();
+            navigation.navigate('PlayerSetup');
+          },
+          style: "destructive"
+        },
+      ]);
+      setModalVisible(true);
+    } else {
+      startNewGame();
+      navigation.navigate('PlayerSetup');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -31,10 +67,21 @@ const HomeScreen = ({ navigation }: any) => {
         <TouchableOpacity style={styles.button} onPress={handleNewGame}>
           <Text style={styles.buttonText}>Nueva Partida</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleContinue}>
+        <TouchableOpacity
+          style={[styles.button, !hasSavedGame && styles.disabledButton]}
+          onPress={handleContinue}
+          disabled={!hasSavedGame}
+        >
           <Text style={styles.buttonText}>Continuar Partida</Text>
         </TouchableOpacity>
       </View>
+
+      <AppModal
+        visible={modalVisible}
+        title={modalTitle}
+        message={modalMessage}
+        buttons={modalButtons}
+      />
     </View>
   );
 };
@@ -70,6 +117,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
   },
 });
 
