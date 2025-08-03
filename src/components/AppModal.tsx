@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, View, Text, Button, StyleSheet } from "react-native";
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 interface AppModalProps {
   visible: boolean;
@@ -18,6 +18,21 @@ const AppModal: React.FC<AppModalProps> = ({
   message,
   buttons,
 }) => {
+  const getButtonStyle = (style?: "default" | "cancel" | "destructive") => {
+    switch (style) {
+      case "destructive":
+        return styles.destructiveButton;
+      case "cancel":
+        return styles.cancelButton;
+      default:
+        return styles.defaultButton;
+    }
+  };
+
+  const getButtonTextStyle = (style?: "default" | "cancel" | "destructive") => {
+    return style === "cancel" ? styles.cancelButtonText : styles.buttonText;
+  };
+
   return (
     <Modal
       transparent={true}
@@ -31,12 +46,13 @@ const AppModal: React.FC<AppModalProps> = ({
           <Text style={styles.modalMessage}>{message}</Text>
           <View style={styles.buttonContainer}>
             {buttons.map((btn, index) => (
-              <Button
+              <TouchableOpacity
                 key={index}
-                title={btn.text}
+                style={[styles.button, getButtonStyle(btn.style)]}
                 onPress={btn.onPress}
-                color={btn.style === "destructive" ? "red" : undefined}
-              />
+              >
+                <Text style={getButtonTextStyle(btn.style)}>{btn.text}</Text>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -82,6 +98,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
+  },
+  button: {
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginHorizontal: 10,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  defaultButton: {
+    backgroundColor: '#007bff',
+  },
+  destructiveButton: {
+    backgroundColor: '#dc3545',
+  },
+  cancelButton: {
+    backgroundColor: '#6c757d',
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 16,
+  },
+  cancelButtonText: {
+    color: "white",
   },
 });
 
