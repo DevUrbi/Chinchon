@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import useGameStore from '../state/game-store';
 import AppModal from '../components/AppModal';
+import ScoreModal from '../components/ScoreModal';
 
 const GameScreen = ({ navigation }: any) => {
   const { players, currentRoundScores, updateRoundScore, nextRound, round, chinchonWin, gameEnded, gameWinnerId } = useGameStore();
   const [modalVisible, setModalVisible] = useState(false);
+  const [scoreModalVisible, setScoreModalVisible] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [modalButtons, setModalButtons] = useState<any[]>([]);
@@ -24,6 +27,17 @@ const GameScreen = ({ navigation }: any) => {
     setModalVisible(true);
   };
 
+  const openScoreModal = (player: any) => {
+    setSelectedPlayer(player);
+    setScoreModalVisible(true);
+  };
+
+  const onScoreChange = (amount: number) => {
+    if (selectedPlayer) {
+      updateRoundScore(selectedPlayer.id, amount);
+    }
+  };
+
   useEffect(() => {
     navigation.setOptions({ title: `Ronda ${round}` });
   }, [round, navigation, gameEnded]);
@@ -39,30 +53,17 @@ const GameScreen = ({ navigation }: any) => {
   }, [players, round, navigation, gameEnded]);
 
   const renderPlayer = ({ item }: { item: any }) => {
-    const isDisabled = item.isEliminated || (gameEnded && item.id !== gameWinnerId);
+    const isDisabled = item.isEliminated || gameEnded;
 
     return (
-      <View style={[styles.playerRow, isDisabled && styles.disabledPlayerRow]}>
+      <TouchableOpacity
+        onPress={() => !isDisabled && openScoreModal(item)}
+        style={[styles.playerRow, isDisabled && styles.disabledPlayerRow]}
+        disabled={isDisabled}
+      >
         <Text style={[styles.playerName, isDisabled && styles.disabledPlayerText]}>{item.name}</Text>
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, -10)} style={[styles.scoreButton, styles.negativeButton]} disabled={isDisabled}>
-            <Text style={[styles.scoreButtonText, styles.negativeButtonText]}>-10</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, -1)} style={[styles.scoreButton, styles.negativeButton]} disabled={isDisabled}>
-            <Text style={[styles.scoreButtonText, styles.negativeButtonText]}>-1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, 1)} style={[styles.scoreButton, styles.positiveButton]} disabled={isDisabled}>
-            <Text style={[styles.scoreButtonText, styles.positiveButtonText]}>+1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => updateRoundScore(item.id, 5)} style={[styles.scoreButton, styles.positiveButton]} disabled={isDisabled}>
-            <Text style={[styles.scoreButtonText, styles.positiveButtonText]}>+5</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleChinchon(item.id)} style={[styles.scoreButton, styles.chinchonButton]} disabled={isDisabled}>
-            <Text style={[styles.scoreButtonText, styles.chinchonButtonText]}>CH</Text>
-          </TouchableOpacity>
-          <Text style={[styles.playerScore, isDisabled && styles.disabledPlayerText]}>{currentRoundScores[item.id] || 0}</Text>
-        </View>
-      </View>
+        <Text style={[styles.playerScore, isDisabled && styles.disabledPlayerText]}>{currentRoundScores[item.id] || 0}</Text>
+      </TouchableOpacity>
     );
   };
 
@@ -83,6 +84,13 @@ const GameScreen = ({ navigation }: any) => {
         message={modalMessage}
         buttons={modalButtons}
       />
+      <ScoreModal
+        visible={scoreModalVisible}
+        player={selectedPlayer}
+        onClose={() => setScoreModalVisible(false)}
+        onScoreChange={onScoreChange}
+        onChinchon={() => selectedPlayer && handleChinchon(selectedPlayer.id)}
+      />
     </View>
   );
 };
@@ -95,55 +103,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
   playerName: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '500',
-    flex: 1,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   playerScore: {
-    fontSize: 20,
-    minWidth: 40,
-    textAlign: 'right',
-    marginLeft: 10,
-  },
-  scoreButton: {
-    height: 32,
-    width: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 4,
-    borderWidth: 1,
-  },
-  negativeButton: {
-    borderColor: '#28a745', // Green
-  },
-  positiveButton: {
-    borderColor: '#dc3545', // Red
-  },
-  scoreButtonText: {
-    fontSize: 12,
+    fontSize: 22,
     fontWeight: 'bold',
-  },
-  negativeButtonText: {
-    color: '#28a745', // Green
-  },
-  positiveButtonText: {
-    color: '#dc3545', // Red
+    minWidth: 60,
+    textAlign: 'right',
   },
   chinchonButton: {
-    borderColor: '#007bff',
+    backgroundColor: '#007bff',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 5,
+    marginLeft: 15,
   },
   chinchonButtonText: {
-    color: '#007bff',
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   button: {
     backgroundColor: '#007bff',
