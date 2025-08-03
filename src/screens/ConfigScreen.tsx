@@ -4,17 +4,25 @@ import { Ionicons } from '@expo/vector-icons';
 import useGameStore from '../state/game-store';
 
 const ConfigScreen = ({ navigation }: any) => {
-  const { rebuyLimit, setRebuyLimit } = useGameStore();
+  const { rebuyLimit, setRebuyLimit, scoreLimit, setScoreLimit } = useGameStore();
 
-  const handleDecrement = () => {
+  const handleRebuyDecrement = () => {
     if (rebuyLimit === null) setRebuyLimit(10); // From infinity to 10
     else if (rebuyLimit > 0) setRebuyLimit(rebuyLimit - 1);
     else if (rebuyLimit === 0) setRebuyLimit(null); // From 0 to infinity
   };
 
-  const handleIncrement = () => {
+  const handleRebuyIncrement = () => {
     if (rebuyLimit === null) setRebuyLimit(0); // From infinity to 0
     else setRebuyLimit(rebuyLimit + 1);
+  };
+
+  const handleScoreLimitDecrement = () => {
+    if (scoreLimit > 50) setScoreLimit(scoreLimit - 10);
+  };
+
+  const handleScoreLimitIncrement = () => {
+    setScoreLimit(scoreLimit + 10);
   };
 
   return (
@@ -23,12 +31,25 @@ const ConfigScreen = ({ navigation }: any) => {
         <View style={styles.settingRow}>
           <Text style={styles.settingLabel}>Reenganches</Text>
           <View style={styles.spinnerContainer}>
-            <TouchableOpacity onPress={handleDecrement} style={styles.spinnerButton}>
-              <Ionicons name="remove-circle-outline" size={32} color="#dc3545" />
+            <TouchableOpacity onPress={handleRebuyDecrement} style={styles.spinnerButton}>
+              <Ionicons name="remove-circle-outline" size={40} color="#dc3545" />
             </TouchableOpacity>
             <Text style={styles.rebuyValue}>{rebuyLimit === null ? '∞' : rebuyLimit}</Text>
-            <TouchableOpacity onPress={handleIncrement} style={styles.spinnerButton}>
-              <Ionicons name="add-circle-outline" size={32} color="#28a745" />
+            <TouchableOpacity onPress={handleRebuyIncrement} style={styles.spinnerButton}>
+              <Ionicons name="add-circle-outline" size={40} color="#28a745" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>Límite de Puntos</Text>
+          <View style={styles.spinnerContainer}>
+            <TouchableOpacity onPress={handleScoreLimitDecrement} style={styles.spinnerButton}>
+              <Ionicons name="remove-circle-outline" size={40} color="#dc3545" />
+            </TouchableOpacity>
+            <Text style={styles.rebuyValue}>{scoreLimit}</Text>
+            <TouchableOpacity onPress={handleScoreLimitIncrement} style={styles.spinnerButton}>
+              <Ionicons name="add-circle-outline" size={40} color="#28a745" />
             </TouchableOpacity>
           </View>
         </View>

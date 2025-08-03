@@ -29,7 +29,7 @@ const PlayerSetupScreen = ({ navigation }: any) => {
           onChangeText={setName}
         />
         <TouchableOpacity onPress={handleAddPlayer} style={styles.iconButton}>
-          <Ionicons name="add-circle" size={30} color="green" />
+          <Ionicons name="add-circle-outline" size={40} color="#28a745" />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -38,7 +38,7 @@ const PlayerSetupScreen = ({ navigation }: any) => {
           <View style={styles.playerRow}>
             <Text style={styles.playerName}>{item.name}</Text>
             <TouchableOpacity onPress={() => removePlayer(item.id)} style={styles.iconButton}>
-              <Ionicons name="remove-circle" size={30} color="red" />
+              <Ionicons name="remove-circle-outline" size={40} color="#dc3545" />
             </TouchableOpacity>
           </View>
         )}

@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GameState, Player } from "../types";
 
 interface ChinchonGameState extends GameState {
+  scoreLimit: number;
   round: number;
   history: any[];
   currentRoundScores: { [playerId: string]: number };
@@ -12,6 +13,7 @@ interface ChinchonGameState extends GameState {
   removePlayer: (id: string) => void;
   updateRoundScore: (id: string, amount: number) => void;
   setRebuyLimit: (limit: number | null) => void;
+  setScoreLimit: (limit: number) => void;
   nextRound: () => void;
   loadGame: () => Promise<boolean>;
   startNewGame: () => void;
@@ -21,6 +23,7 @@ interface ChinchonGameState extends GameState {
 const useGameStore = create<ChinchonGameState>((set, get) => ({
   players: [],
   rebuyLimit: null,
+  scoreLimit: 100,
   round: 1,
   history: [],
   currentRoundScores: {},
@@ -67,8 +70,12 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
     set({ rebuyLimit: limit });
   },
 
+  setScoreLimit: (limit: number) => {
+    set({ scoreLimit: limit });
+  },
+
   nextRound: () => {
-    const { players, rebuyLimit, history, currentRoundScores, round } = get();
+    const { players, rebuyLimit, history, currentRoundScores, round, scoreLimit } = get();
 
     // 1. Save current round scores to history
     const roundHistory = { round, scores: { ...currentRoundScores } };
@@ -84,7 +91,7 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
     const updatedPlayers = playersWithNewTotal.map((player) => {
       if (player.isEliminated) return player;
 
-      if (player.score >= 100) {
+      if (player.score >= scoreLimit) {
         if (rebuyLimit !== null && player.rebuys >= rebuyLimit) {
           return { ...player, isEliminated: true };
         } else {
@@ -134,6 +141,7 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
       players: [],
       history: [],
       rebuyLimit: null,
+      scoreLimit: 100,
       round: 1,
       currentRoundScores: {},
       gameWinnerId: null,
