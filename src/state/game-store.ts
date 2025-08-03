@@ -88,6 +88,26 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
     }));
 
     // 3. Apply elimination and rebuy logic
+    let playersInGame = playersWithNewTotal.filter((p) => !p.isEliminated);
+    const playersOverLimit = playersInGame.filter((p) => p.score >= scoreLimit);
+
+    if (playersInGame.length - playersOverLimit.length < 2) {
+      // Not enough players to continue, game ends
+      const winner = playersInGame.sort((a, b) => a.score - b.score)[0];
+      set({
+        gameWinnerId: winner.id,
+        gameEnded: true,
+        players: playersWithNewTotal,
+        history: newHistory,
+      });
+      AsyncStorage.setItem("chinchon-game", JSON.stringify(get()));
+      return;
+    }
+
+    const highestScoreUnderLimit = Math.max(
+      ...playersInGame.filter((p) => p.score < scoreLimit).map((p) => p.score)
+    );
+
     const updatedPlayers = playersWithNewTotal.map((player) => {
       if (player.isEliminated) return player;
 
@@ -95,14 +115,9 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
         if (rebuyLimit !== null && player.rebuys >= rebuyLimit) {
           return { ...player, isEliminated: true };
         } else {
-          const highestScore = Math.max(
-            ...playersWithNewTotal
-              .filter((p) => !p.isEliminated && p.id !== player.id)
-              .map((p) => p.score)
-          );
           return {
             ...player,
-            score: highestScore,
+            score: highestScoreUnderLimit,
             rebuys: player.rebuys + 1,
           };
         }
