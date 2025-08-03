@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import useGameStore from '../state/game-store';
 import AppModal from '../components/AppModal';
 import ScoreModal from '../components/ScoreModal';
+import ConfettiCannon from 'react-native-confetti-cannon';
 
 const GameScreen = ({ navigation }: any) => {
   const { players, currentRoundScores, updateRoundScore, nextRound, round, chinchonWin, gameEnded, gameWinnerId } = useGameStore();
@@ -12,6 +13,7 @@ const GameScreen = ({ navigation }: any) => {
   const [modalTitle, setModalTitle] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [modalButtons, setModalButtons] = useState<any[]>([]);
+  const confettiRef = useRef<any>(null);
 
   const handleNextRound = () => {
     nextRound();
@@ -49,6 +51,9 @@ const GameScreen = ({ navigation }: any) => {
       setModalMessage(activePlayers.length === 1 ? `El ganador es ${activePlayers[0].name}` : "Todos los jugadores han sido eliminados");
       setModalButtons([{ text: "Ver Resultados", onPress: () => { setModalVisible(false); navigation.navigate('Classification'); } }]);
       setModalVisible(true);
+      if (activePlayers.length === 1 && confettiRef.current) {
+        confettiRef.current.start();
+      }
     }
   }, [players, round, navigation, gameEnded]);
 
@@ -95,6 +100,7 @@ const GameScreen = ({ navigation }: any) => {
         onScoreChange={onScoreChange}
         onChinchon={() => selectedPlayer && handleChinchon(selectedPlayer.id)}
       />
+      {gameEnded && <ConfettiCannon count={200} origin={{x: -10, y: 0}} autoStart={true} ref={confettiRef} />}
     </View>
   );
 };
