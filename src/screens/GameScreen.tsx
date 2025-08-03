@@ -62,7 +62,10 @@ const GameScreen = ({ navigation }: any) => {
         disabled={isDisabled}
       >
         <Text style={[styles.playerName, isDisabled && styles.disabledPlayerText]}>{item.name}</Text>
-        <Text style={[styles.playerScore, isDisabled && styles.disabledPlayerText]}>{currentRoundScores[item.id] || 0}</Text>
+        <View style={styles.scoresContainer}>
+          <Text style={[styles.playerScore, isDisabled && styles.disabledPlayerText]}>{item.score}</Text>
+          <Text style={[styles.roundScore, isDisabled && styles.disabledPlayerText]}>({currentRoundScores[item.id] || 0})</Text>
+        </View>
       </TouchableOpacity>
     );
   };
@@ -87,6 +90,7 @@ const GameScreen = ({ navigation }: any) => {
       <ScoreModal
         visible={scoreModalVisible}
         player={selectedPlayer}
+        roundScore={selectedPlayer ? currentRoundScores[selectedPlayer.id] || 0 : 0}
         onClose={() => setScoreModalVisible(false)}
         onScoreChange={onScoreChange}
         onChinchon={() => selectedPlayer && handleChinchon(selectedPlayer.id)}
@@ -111,11 +115,20 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '500',
   },
+  scoresContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   playerScore: {
     fontSize: 22,
     fontWeight: 'bold',
     minWidth: 60,
     textAlign: 'right',
+  },
+  roundScore: {
+    fontSize: 18,
+    color: '#6c757d',
+    marginLeft: 5,
   },
   chinchonButton: {
     backgroundColor: '#007bff',
