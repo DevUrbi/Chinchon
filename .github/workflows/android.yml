@@ -1,43 +1,43 @@
-# .github/workflows/build-apk-simple.yml
-name: Build APK
+name: Build Android
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: "npm"
+          node-version: 18
+          cache: npm
 
-      - name: Setup JDK
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: "17"
-          distribution: "temurin"
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install dependencies
         run: npm install
+
+      - name: Generate native project
+        run: npx expo prebuild --platform android --non-interactive
 
       - name: Build APK
         run: |
           cd android
           ./gradlew assembleRelease
 
-      - name: Upload APK
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
+          name: app
           path: android/app/build/outputs/apk/release/app-release.apk
