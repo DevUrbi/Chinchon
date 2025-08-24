@@ -28,7 +28,7 @@ jobs:
         run: npx expo export --platform web
 
       - name: Set custom domain
-        run: echo "chichon.urbieta.dev" > ./dist/CNAME
+        run: echo "chinchon.urbieta.dev" > ./dist/CNAME
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
