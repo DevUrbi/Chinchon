@@ -1,22 +1,22 @@
-
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import useGameStore from '../state/game-store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { version } from '../../package.json';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import useGameStore from "../state/game-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { version } from "../../package.json";
+import AppModal from "../components/AppModal";
 
 const HomeScreen = ({ navigation }: any) => {
   const { loadGame, startNewGame } = useGameStore();
   const [hasSavedGame, setHasSavedGame] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
   const [modalButtons, setModalButtons] = useState<any[]>([]);
 
   useEffect(() => {
     const checkSavedGame = async () => {
-      const savedGame = await AsyncStorage.getItem('chinchon-game');
+      const savedGame = await AsyncStorage.getItem("chinchon-game");
       setHasSavedGame(!!savedGame);
     };
     checkSavedGame();
@@ -25,7 +25,7 @@ const HomeScreen = ({ navigation }: any) => {
   const handleContinue = async () => {
     const gameExists = await loadGame();
     if (gameExists) {
-      navigation.navigate('Game');
+      navigation.navigate("Game");
     } else {
       setModalTitle("No hay partida guardada");
       setModalMessage("No se encontró ninguna partida para continuar.");
@@ -37,23 +37,29 @@ const HomeScreen = ({ navigation }: any) => {
   const handleNewGame = () => {
     if (hasSavedGame) {
       setModalTitle("Iniciar Nueva Partida");
-      setModalMessage("Existe una partida guardada. Si inicias una nueva, la actual se perderá. ¿Estás seguro?");
+      setModalMessage(
+        "Existe una partida guardada. Si inicias una nueva, la actual se perderá. ¿Estás seguro?"
+      );
       setModalButtons([
-        { text: "Cancelar", onPress: () => setModalVisible(false), style: "cancel" },
+        {
+          text: "Cancelar",
+          onPress: () => setModalVisible(false),
+          style: "cancel",
+        },
         {
           text: "Sí, iniciar nueva",
           onPress: () => {
             setModalVisible(false);
             startNewGame();
-            navigation.navigate('PlayerSetup');
+            navigation.navigate("PlayerSetup");
           },
-          style: "destructive"
+          style: "destructive",
         },
       ]);
       setModalVisible(true);
     } else {
       startNewGame();
-      navigation.navigate('PlayerSetup');
+      navigation.navigate("PlayerSetup");
     }
   };
 
@@ -61,7 +67,7 @@ const HomeScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Ionicons name="layers-outline" size={100} color="#DAA520" />
-                <Text style={styles.title}>Chinchón</Text>
+        <Text style={styles.title}>Chinchón</Text>
         <Text style={styles.version}>v{version}</Text>
       </View>
       <View style={styles.buttonsContainer}>
@@ -90,41 +96,41 @@ const HomeScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
     padding: 20,
   },
   logoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   title: {
     fontSize: 48,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginTop: 20,
   },
   version: {
     fontSize: 14,
-    color: '#888',
+    color: "#888",
   },
   buttonsContainer: {
-    width: '100%',
+    width: "100%",
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: "#007bff",
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 15,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
 });
 
