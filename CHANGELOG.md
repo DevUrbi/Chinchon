@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/DevUrbi/Chinchon/compare/v1.0.2...v1.0.3) (2025-08-24)
+
+
+### Bug Fixes
+
+* update custom domain setting to use echo -n in deploy workflow ([ae98074](https://github.com/DevUrbi/Chinchon/commit/ae98074accfa2edbad2348fb89bc4c88dd8f48c9))
+
 ## [1.0.2](https://github.com/DevUrbi/Chinchon/compare/v1.0.1...v1.0.2) (2025-08-24)
 
 
