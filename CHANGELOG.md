@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/DevUrbi/Chinchon/compare/v1.0.1...v1.0.2) (2025-08-24)
+
+
+### Bug Fixes
+
+* standardize string quotes and improve code formatting in HomeScreen ([286dd11](https://github.com/DevUrbi/Chinchon/commit/286dd11ceffea2201d4b7b141544a3856c026d02))
+
 ## [1.0.1](https://github.com/DevUrbi/Chinchon/compare/v1.0.0...v1.0.1) (2025-08-24)
 
 
