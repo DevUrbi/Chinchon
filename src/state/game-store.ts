@@ -75,7 +75,14 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
   },
 
   nextRound: () => {
-    const { players, rebuyLimit, history, currentRoundScores, round, scoreLimit } = get();
+    const {
+      players,
+      rebuyLimit,
+      history,
+      currentRoundScores,
+      round,
+      scoreLimit,
+    } = get();
 
     // 1. Save current round scores to history
     const roundHistory = { round, scores: { ...currentRoundScores } };
@@ -89,7 +96,7 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
 
     // 3. Apply elimination and rebuy logic
     let playersInGame = playersWithNewTotal.filter((p) => !p.isEliminated);
-    const playersOverLimit = playersInGame.filter((p) => p.score >= scoreLimit);
+    const playersOverLimit = playersInGame.filter((p) => p.score > scoreLimit); // Cambiado >= por >
 
     if (playersInGame.length - playersOverLimit.length < 2) {
       // Not enough players to continue, game ends
@@ -105,13 +112,14 @@ const useGameStore = create<ChinchonGameState>((set, get) => ({
     }
 
     const highestScoreUnderLimit = Math.max(
-      ...playersInGame.filter((p) => p.score < scoreLimit).map((p) => p.score)
+      ...playersInGame.filter((p) => p.score <= scoreLimit).map((p) => p.score) // Cambiado < por <=
     );
 
     const updatedPlayers = playersWithNewTotal.map((player) => {
       if (player.isEliminated) return player;
 
-      if (player.score >= scoreLimit) {
+      if (player.score > scoreLimit) {
+        // Cambiado >= por >
         if (rebuyLimit !== null && player.rebuys >= rebuyLimit) {
           return { ...player, isEliminated: true };
         } else {
