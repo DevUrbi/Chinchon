@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface ScoreModalProps {
   visible: boolean;
@@ -11,8 +11,14 @@ interface ScoreModalProps {
   onChinchon: () => void;
 }
 
-const ScoreModal: React.FC<ScoreModalProps> = ({ visible, player, roundScore, onClose, onScoreChange, onChinchon }) => {
-
+const ScoreModal: React.FC<ScoreModalProps> = ({
+  visible,
+  player,
+  roundScore,
+  onClose,
+  onScoreChange,
+  onChinchon,
+}) => {
   const handlePress = (amount: number) => {
     onScoreChange(amount);
   };
@@ -20,7 +26,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ visible, player, roundScore, on
   const handleChinchon = () => {
     onChinchon();
     onClose();
-  }
+  };
 
   return (
     <Modal
@@ -34,13 +40,48 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ visible, player, roundScore, on
           <Text style={styles.playerName}>{player?.name}</Text>
           <Text style={styles.currentScore}>{roundScore}</Text>
           <View style={styles.buttonGrid}>
-            <TouchableOpacity style={[styles.scoreButton, styles.positiveButton]} onPress={() => handlePress(1)}><Text style={styles.buttonText}>+1</Text></TouchableOpacity>
-            <TouchableOpacity style={[styles.scoreButton, styles.positiveButton]} onPress={() => handlePress(5)}><Text style={styles.buttonText}>+5</Text></TouchableOpacity>
-            <TouchableOpacity style={[styles.scoreButton, styles.positiveButton]} onPress={() => handlePress(10)}><Text style={styles.buttonText}>+10</Text></TouchableOpacity>
-            <TouchableOpacity style={[styles.scoreButton, styles.negativeButton]} onPress={() => handlePress(-1)}><Text style={styles.buttonText}>-1</Text></TouchableOpacity>
-            <TouchableOpacity style={[styles.scoreButton, styles.negativeButton]} onPress={() => handlePress(-5)}><Text style={styles.buttonText}>-5</Text></TouchableOpacity>
-            <TouchableOpacity style={[styles.scoreButton, styles.negativeButton]} onPress={() => handlePress(-10)}><Text style={styles.buttonText}>-10</Text></TouchableOpacity>
-            <TouchableOpacity style={[styles.scoreButton, styles.chinchonButton]} onPress={handleChinchon}><Text style={styles.buttonText}>¡Chinchón!</Text></TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.scoreButton, styles.positiveButton]}
+              onPress={() => handlePress(1)}
+            >
+              <Text style={styles.buttonText}>+1</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.scoreButton, styles.positiveButton]}
+              onPress={() => handlePress(5)}
+            >
+              <Text style={styles.buttonText}>+5</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.scoreButton, styles.positiveButton]}
+              onPress={() => handlePress(10)}
+            >
+              <Text style={styles.buttonText}>+10</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.scoreButton, styles.negativeButton]}
+              onPress={() => handlePress(-1)}
+            >
+              <Text style={styles.buttonText}>-1</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.scoreButton, styles.negativeButton]}
+              onPress={() => handlePress(-5)}
+            >
+              <Text style={styles.buttonText}>-5</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.scoreButton, styles.negativeButton]}
+              onPress={() => handlePress(-10)}
+            >
+              <Text style={styles.buttonText}>-10</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.scoreButton, styles.chinchonButton]}
+              onPress={handleChinchon}
+            >
+              <Text style={styles.buttonText}>¡Chinchón!</Text>
+            </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.saveButton} onPress={onClose}>
             <Text style={styles.saveButtonText}>Guardar</Text>
@@ -54,17 +95,17 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ visible, player, roundScore, on
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 25,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -72,60 +113,59 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '90%',
+    width: "90%",
   },
   playerName: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
   },
   currentScore: {
     fontSize: 48,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   buttonGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    width: '100%',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%",
   },
   scoreButton: {
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 10,
     margin: 5,
-    flexGrow: 1,
-    flexBasis: '25%',
-    alignItems: 'center',
+    flexBasis: "25%",
+    alignItems: "center",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   positiveButton: {
-    backgroundColor: '#dc3545',
+    backgroundColor: "#dc3545",
   },
   negativeButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: "#28a745",
   },
   chinchonButton: {
-    backgroundColor: '#ffc107',
-    flexBasis: '80%',
+    backgroundColor: "#ffc107",
+    flexBasis: "80%",
     paddingVertical: 20,
   },
   saveButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: "#007bff",
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginTop: 20,
   },
   saveButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
