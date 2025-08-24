@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import useGameStore from '../state/game-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AppModal from '../components/AppModal';
+import { version } from '../../package.json';
 
 const HomeScreen = ({ navigation }: any) => {
   const { loadGame, startNewGame } = useGameStore();
@@ -61,7 +61,8 @@ const HomeScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Ionicons name="layers-outline" size={100} color="#DAA520" />
-        <Text style={styles.title}>Chinchón</Text>
+                <Text style={styles.title}>Chinchón</Text>
+        <Text style={styles.version}>v{version}</Text>
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleNewGame}>
@@ -102,6 +103,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginTop: 20,
+  },
+  version: {
+    fontSize: 14,
+    color: '#888',
   },
   buttonsContainer: {
     width: '100%',
