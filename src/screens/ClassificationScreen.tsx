@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import useGameStore from "../state/game-store";
-import ConfettiCannon from 'react-native-confetti-cannon';
+
 
 const ClassificationScreen = ({ navigation }: any) => {
   const { players, gameWinnerId, gameEnded } = useGameStore();
@@ -64,7 +64,7 @@ const ClassificationScreen = ({ navigation }: any) => {
       >
         <Text style={styles.buttonText}>Continuar</Text>
       </TouchableOpacity>
-      {gameEnded && <ConfettiCannon count={200} origin={{x: -10, y: 0}} autoStart={true} />}
+      
     </View>
   );
 };
